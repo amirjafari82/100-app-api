@@ -59,13 +59,15 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-CORS_ALLOWED_ORIGINS = [
-    "http://localhost:5173"
-]
+# CORS_ALLOWED_ORIGINS = [
+#     "http://localhost:5173"
+# ]
 
-CORS_ALLOW_HEADERS = default_headers + (
-    'Access-Control-Allow-Origin',
-)
+# CORS_ALLOW_HEADERS = default_headers + (
+#     'Access-Control-Allow-Origin',
+# )
+
+CORS_ORIGIN_ALLOW_ALL = DEBUG
 
 ROOT_URLCONF = 'app100.urls'
 
