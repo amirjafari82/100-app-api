@@ -12,7 +12,8 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 
 from pathlib import Path
 import os
-from corsheaders.defaults import default_headers
+import corsheaders
+from datetime import timedelta
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -43,8 +44,10 @@ INSTALLED_APPS = [
     #local apps
     'home.apps.HomeConfig',
     'onboarding.apps.OnboardingConfig',
+    'accounts.apps.AccountsConfig',
     #third party apps
     'rest_framework',
+    "rest_framework_simplejwt",
     "corsheaders",
 ]
 
@@ -68,6 +71,8 @@ MIDDLEWARE = [
 # )
 
 CORS_ORIGIN_ALLOW_ALL = DEBUG
+
+CORS_ALLOW_CREDENTIALS = True
 
 ROOT_URLCONF = 'app100.urls'
 
@@ -119,6 +124,7 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+AUTH_USER_MODEL = "accounts.User"
 
 # Internationalization
 # https://docs.djangoproject.com/en/5.1/topics/i18n/
@@ -148,3 +154,19 @@ MEDIA_ROOT = BASE_DIR / "static/images/"
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'accounts.authentication.CookiesJWTAuthentication',
+    ),
+    'DEFAULT_PERMISSION_CLASSES': (
+        'rest_framework.permissions.IsAuthenticated',
+    )
+}
+
+SIMPLE_JWT = {
+    "ACCESS_TOKEN_LIFETIME": timedelta(days=1),
+    "REFRESH_TOKEN_LIFETIME": timedelta(days=1),
+
+    "AUTH_HEADER_TYPES": ("Bearer",)
+}
