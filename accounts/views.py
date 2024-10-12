@@ -6,7 +6,7 @@ from rest_framework_simplejwt.views import (
 )
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from .serializers import UserLoginSerializer, UserSerializer
-from accounts.models import User
+from accounts.models import User, Wallet
 
 
 class CustomTokenObtainPairView(TokenObtainPairView):
@@ -101,9 +101,10 @@ class IsAuthenticatedView(APIView):
     permission_classes = [AllowAny]
     
     def post(self, request):
-        user = self.request.user
+        user = request.user
+        if user.is_anonymous:
+            user = {'phone': "", 'first_name': "", 'last_name': "", 'is_admin': ""}
+            return Response({'authenticated': False, 'user': user})
         if user.is_authenticated:
             ser_data = UserSerializer(user)
-            return Response({'authenticated': True, 'user': ser_data.data})
-        user = {'phone': "", 'first_name': "", 'last_name': "", 'is_admin': ""}
-        return Response({'authenticated': False, 'user': user})
+            return Response({'authenticated': True, 'user': ser_data.data, 'balance': user.wallet.balance})

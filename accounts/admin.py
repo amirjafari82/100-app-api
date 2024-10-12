@@ -3,7 +3,7 @@ from django import forms
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 from django.core.exceptions import ValidationError
 from django.contrib.auth.forms import ReadOnlyPasswordHashField
-from .models import User
+from .models import User, Wallet
 
 
 class UserCreationForm(forms.ModelForm):
@@ -25,6 +25,9 @@ class UserChangeForm(forms.ModelForm):
         model = User
         fields = ["phone", "first_name", "last_name", "is_admin"]
 
+class WalletInline(admin.StackedInline):
+    model = Wallet
+    can_delete = False
 
 class UserAdmin(BaseUserAdmin):
     form = UserChangeForm
@@ -50,5 +53,7 @@ class UserAdmin(BaseUserAdmin):
     search_fields = ["phone", "first_name", "last_name"]
     ordering = ["phone"]
     filter_horizontal = []
+    inlines = (WalletInline,)
+    
 
 admin.site.register(User, UserAdmin)

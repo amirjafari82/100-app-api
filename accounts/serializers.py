@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from accounts.models import User
+from accounts.models import User, Wallet
 
 
 class UserLoginSerializer(serializers.ModelSerializer):

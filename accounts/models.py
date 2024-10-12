@@ -46,3 +46,11 @@ class User(AbstractBaseUser):
     @property
     def is_staff(self):
         return self.is_admin
+    
+
+class Wallet(models.Model):
+    user = models.OneToOneField(to=User, on_delete=models.CASCADE, related_name='wallet')
+    balance = models.PositiveBigIntegerField(verbose_name="Balance",default=0)
+    
+    def __str__(self):
+        return f'{self.user} Wallet'

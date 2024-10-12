@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     'home.apps.HomeConfig',
     'onboarding.apps.OnboardingConfig',
     'accounts.apps.AccountsConfig',
+    'card.apps.CardConfig',
     #third party apps
     'rest_framework',
     "rest_framework_simplejwt",
