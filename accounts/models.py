@@ -27,6 +27,13 @@ class User(AbstractBaseUser):
     phone = models.CharField(verbose_name='Phone Number', max_length=11, unique=True)
     first_name = models.CharField(verbose_name='First Name', max_length=20, blank=True, null=True)
     last_name= models.CharField(verbose_name='Last Name', max_length=20, blank=True, null=True)
+    image = models.ImageField(upload_to='users', blank=True, null=True)
+    national_id = models.CharField(verbose_name="National ID", max_length=16, blank=True, null=True)
+    gender = models.CharField(choices=(
+        ("Male", ("Male")),
+        ("Female", ("Female")),
+    ), max_length=12, blank=True, null=True)
+    birthday = models.CharField(verbose_name="Birthday", blank=True, null=True, max_length=100)
     
     is_admin = models.BooleanField(default=False)
     

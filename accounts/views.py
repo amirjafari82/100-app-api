@@ -5,7 +5,7 @@ from rest_framework_simplejwt.views import (
     TokenRefreshView,
 )
 from rest_framework.permissions import IsAuthenticated, AllowAny
-from .serializers import UserLoginSerializer, UserSerializer
+from .serializers import UserLoginSerializer, UserSerializer, UpdateProfileSerializer
 from accounts.models import User, Wallet
 
 
@@ -96,8 +96,20 @@ class LogoutView(APIView):
             return Response({'success': False})
 
 
+class UpdateProfileView(APIView):
+    permission_classes = [IsAuthenticated]
+    
+    def post(self, request):
+        srz_data = UpdateProfileSerializer(request.user,data=request.data,partial=True)
+        if srz_data.is_valid():
+            srz_data.save()
+            return Response({'message': 'success'})
+        print(srz_data.errors)
+        return Response({'message': 'Fail'})
+
 
 class IsAuthenticatedView(APIView):
+    
     permission_classes = [AllowAny]
     
     def post(self, request):

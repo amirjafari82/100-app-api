@@ -10,7 +10,7 @@ class UserCreationForm(forms.ModelForm):
 
     class Meta:
         model = User
-        fields = ["phone", "first_name", "last_name"]
+        fields = ["phone", "first_name", "last_name", "national_id", "gender", "birthday"]
 
     def save(self, commit=True):
         user = super().save(commit=False)
@@ -23,7 +23,7 @@ class UserChangeForm(forms.ModelForm):
 
     class Meta:
         model = User
-        fields = ["phone", "first_name", "last_name", "is_admin"]
+        fields = ["phone", "first_name", "last_name", "is_admin", "national_id", "gender", "birthday", "image"]
 
 class WalletInline(admin.StackedInline):
     model = Wallet
@@ -36,7 +36,7 @@ class UserAdmin(BaseUserAdmin):
     list_filter = ["is_admin"]
     fieldsets = [
         (None, {"fields": ["phone"]}),
-        ("Personal info", {"fields": ["first_name", "last_name"]}),
+        ("Personal info", {"fields": ["first_name", "last_name","national_id", "gender", "birthday", "image"]}),
         ("Permissions", {"fields": ["is_admin"]}),
     ]
     # add_fieldsets is not a standard ModelAdmin attribute. UserAdmin
