@@ -32,7 +32,7 @@ class WalletInline(admin.StackedInline):
 class UserAdmin(BaseUserAdmin):
     form = UserChangeForm
     add_form = UserCreationForm
-    list_display = ["phone", "first_name", "last_name", "is_admin"]
+    list_display = ["phone", "id", "first_name", "last_name", "is_admin"]
     list_filter = ["is_admin"]
     fieldsets = [
         (None, {"fields": ["phone"]}),

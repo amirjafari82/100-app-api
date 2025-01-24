@@ -1,12 +1,16 @@
 from rest_framework.response import Response
+from django.shortcuts import get_object_or_404
 from rest_framework.views import APIView
 from rest_framework_simplejwt.views import (
     TokenObtainPairView,
     TokenRefreshView,
 )
+from rest_framework.request import Request
+from rest_framework import status
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from .serializers import UserLoginSerializer, UserSerializer, UpdateProfileSerializer
 from accounts.models import User, Wallet
+import random
 
 
 class CustomTokenObtainPairView(TokenObtainPairView):
@@ -16,6 +20,7 @@ class CustomTokenObtainPairView(TokenObtainPairView):
             user = User.objects.filter(phone=phone)
             ser = UserLoginSerializer(data=request.data)
             if len(user) == 0:
+                print("test")
                 if ser.is_valid():
                     ser.save()
                     response = super().post(request, *args, **kwargs)
@@ -109,7 +114,6 @@ class UpdateProfileView(APIView):
 
 
 class IsAuthenticatedView(APIView):
-    
     permission_classes = [AllowAny]
     
     def post(self, request):
@@ -120,3 +124,15 @@ class IsAuthenticatedView(APIView):
         if user.is_authenticated:
             ser_data = UserSerializer(user)
             return Response({'authenticated': True, 'user': ser_data.data, 'balance': user.wallet.balance})
+        
+
+class GetUserView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request: Request):
+        id = request.data.get('id')
+        print(id)
+        user = get_object_or_404(User,id=id)
+        ser_data = UserSerializer(user)
+        return Response(ser_data.data)
+        
