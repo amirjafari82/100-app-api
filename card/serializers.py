@@ -13,7 +13,15 @@ class CardSerializer(serializers.ModelSerializer):
     
     class Meta:
         model = Card
-        fields = '__all__'
+        fields = ('id','owner', 'card_number','passcode')
+        
+
+class CardBalanceSerialier(serializers.ModelSerializer):
+    class Meta:
+        model = Card
+        fields = ('card_number','passcode','cvv2','exp')
+    
+
         
 class DesCardSerializer(serializers.ModelSerializer):
     card_owner = serializers.SerializerMethodField()

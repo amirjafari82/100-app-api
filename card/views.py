@@ -3,7 +3,7 @@ from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.request import Request
 from rest_framework.permissions import IsAuthenticated, AllowAny
-from .serializers import CardSerializer, DesCardSerializer, LastSendSerializer, TransactionSerializer
+from .serializers import CardSerializer, DesCardSerializer, LastSendSerializer, TransactionSerializer, CardBalanceSerialier
 from .models import Card, DestinationCard, Transaction
 from accounts.models import User
 
@@ -78,8 +78,12 @@ class TransactionView(APIView):
                     card = ser_data.validated_data['card']
                     des_card = ser_data.validated_data['des_card']
                     created_at = data['created_at']
+                    if card == des_card:
+                        return Response({'message': 'Card and Destination Card Can Not Be Same!'}, status.HTTP_406_NOT_ACCEPTABLE)
                     if card.balance < amount:
                         return Response({'message': 'Not Enough Money'}, status.HTTP_406_NOT_ACCEPTABLE)
+                    if int(amount) < 1000:
+                        return Response({'message': 'Not Acceptable Amount'}, status.HTTP_406_NOT_ACCEPTABLE)
                     card.balance = card.balance - amount
                     des_card.balance = des_card.balance + amount
                     card.save()
@@ -92,9 +96,10 @@ class TransactionView(APIView):
                 amount = data['amount']
                 number = data['number']
                 created_at = data['created_at']
-                print(amount)
                 if card.balance < int(amount):
                     return Response({'message': 'Not Enough Money'}, status.HTTP_406_NOT_ACCEPTABLE)
+                if int(amount) < 1000:
+                    return Response({'message': 'Not Acceptable Amount'}, status.HTTP_406_NOT_ACCEPTABLE)
                 Transaction.objects.create(user=user, type="Recharge", status="Successful", created_at=created_at, card=card, number=number, amount=amount)
                 card.balance = card.balance - int(amount)
                 card.save()
@@ -108,3 +113,26 @@ class TransactionView(APIView):
         ser_data = TransactionSerializer(transactions, many=True)
         return Response(ser_data.data)
         
+        
+class BalanceView(APIView):
+    permission_classes = [IsAuthenticated]
+    
+    def post(self, request: Request):
+        data = request.data['data']
+        print(data['card_number'])
+        try:
+            card = Card.objects.get(card_number=data['card_number'])
+            if (card.passcode != data['passcode']):
+                return Response({'message': 'Passcode Is Wrong', 'field': 'Passcode', 'status': 406})
+            if (card.cvv2 != data['cvv2']):
+                return Response({'message': 'CVV2 Is Wrong', 'field': 'CVV2', 'status': 406})
+            if (card.exp != data['exp']):
+                return Response({'message': 'EXP Is Wrong', 'field': 'EXP', 'status': 406})
+            balance = card.balance
+            if(balance < 5000):
+                return Response({'message': 'Your Balance is less than 5000IRT', 'status': 406})
+            card.balance = card.balance - 144
+            card.save()
+            return Response({'message': 'success', 'balance': str(balance), 'status': 200}, status.HTTP_200_OK)
+        except:
+            return Response({'message': 'CardNumber Is Wrong', 'field': 'Card Number', 'status': 204})

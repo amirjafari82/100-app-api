@@ -9,4 +9,5 @@ urlpatterns = [
     path('transfer/', views.TransferView.as_view(), name='transfer'),
     path('last-sends/', views.LastSendsView.as_view(), name='last-sends'),
     path('transaction/', views.TransactionView.as_view(), name='transaction'),
+    path('balance/', views.BalanceView.as_view(), name='balance'),
 ]
